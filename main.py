@@ -1,23 +1,33 @@
-"""make.fun ai-happy-01 entry program.
+"""Pure Joy entry runner for the make.fun ai-happy-01 competition.
 
-Copies the picture bundled in this repository to the harness output
-path as entry.png. Standard library only, no network, deterministic:
-the same bytes come out on every run.
-The picture was produced for this competition and is stored in the repo as entry.png.
+This tiny program places the bundled artwork where the judge
+expects to find it. It uses only the standard library, talks to
+no network, and always produces exactly the same output file.
 """
 
 import os
 import shutil
-
-HERE = os.path.dirname(os.path.abspath(__file__))
-SOURCE = os.path.join(HERE, "entry.png")
-OUTPUT_NAME = "entry.png"
+from pathlib import Path
 
 
-def main():
-    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
-    os.makedirs(out_dir, exist_ok=True)
-    shutil.copyfile(SOURCE, os.path.join(out_dir, OUTPUT_NAME))
+def copy_picture(source: Path, destination: Path) -> None:
+    """Copy ``source`` to ``destination``, failing clearly if absent."""
+    if not source.is_file():
+        raise SystemExit(f"error: bundled picture not found: {source}")
+    shutil.copyfile(source, destination)
+
+
+def main() -> None:
+    # The picture lives right beside this script.
+    here = Path(__file__).resolve().parent
+    source = here / "entry.png"
+
+    # Honour the runner's chosen folder, with a sensible fallback.
+    target_dir = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output"))
+    target_dir.mkdir(parents=True, exist_ok=True)
+
+    # A plain byte-for-byte copy keeps the result deterministic.
+    copy_picture(source, target_dir / "entry.png")
 
 
 if __name__ == "__main__":
