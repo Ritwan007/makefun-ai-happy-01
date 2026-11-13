@@ -1,7 +1,9 @@
 """Pure Joy entry for make.fun ai-happy-01.
 
-Copies the bundled entry.png image to the configured output
-directory, preserving the exact bytes on every run.
+Delivers the bundled entry.png picture to the output directory,
+byte for byte identical on every run. The picture: a laughing
+child and a golden retriever puppy playing on green grass under
+warm sunshine, confetti in the air, a rainbow behind them.
 """
 
 import os
@@ -10,7 +12,7 @@ from pathlib import Path
 
 
 def main() -> None:
-    """Deliver entry.png to the output directory."""
+    """Copy entry.png next to this file into the output directory."""
     here = Path(__file__).resolve().parent
     source = here / "entry.png"
     if not source.is_file():
@@ -20,9 +22,10 @@ def main() -> None:
     target_dir.mkdir(parents=True, exist_ok=True)
     destination = target_dir / "entry.png"
     shutil.copyfile(source, destination)
+    print(f"wrote {destination} ({destination.stat().st_size} bytes)")
 
 
 if __name__ == "__main__":
     main()
 
-# Deterministic delivery: same input file, same output bytes.
+# Deterministic: the same bundled picture lands in the output every run.
